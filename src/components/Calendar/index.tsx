@@ -1,6 +1,27 @@
 import axios from "axios";
 import React from "react";
 import { useQuery } from "react-query";
+import _lodash from "lodash";
+
+import { daysOfTheWeek } from "libs/utils-types";
+
+import {
+  MonthSt,
+  WrapDaysHeaderSt,
+  DayHeaderSt,
+  WrapDaysContentSt,
+  WrapRowDaysSt,
+  RowDaysSt,
+  DaySt,
+} from "./calendar.styles";
+import {
+  OVER_DAY,
+  getDaysArrayOfMonth,
+  totalDaysOfMonth,
+  firstDayOfWeek,
+  firstDayOfMonth,
+  first,
+} from "./calendar.utils";
 
 const Calendar = () => {
   const { isLoading, error, data } = useQuery(
@@ -10,23 +31,41 @@ const Calendar = () => {
         // TODO: replace online API
         "http://localhost:8888/.netlify/functions/handle-events-calendar",
         JSON.stringify({
-          eventType: "ADD_EVENT",
-          eventData: {
-            user: "Cool Guys",
-            title: "first Call",
-            start: "10",
-            end: "12",
-          },
+          eventType: "GET_EVENTS",
         })
       );
       return { data: response.data };
     }
   );
+  console.log({ data });
+  // Mock current Month
+  const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
   return (
-    <div>
-      <h1>Calendar Component</h1>
-    </div>
+    <MonthSt>
+      <WrapDaysHeaderSt>
+        {daysOfTheWeek.map((dayOfTheWeek, pos) => (
+          <DayHeaderSt key={pos}>{dayOfTheWeek}</DayHeaderSt>
+        ))}
+      </WrapDaysHeaderSt>
+      <WrapDaysContentSt>
+        {_lodash.chunk(daysArr, 7).map((week, weekIndex) => {
+          return (
+            <WrapRowDaysSt key={`${weekIndex}_outer`}>
+              <RowDaysSt>
+                {week.map((day, index) => {
+                  return (
+                    <DaySt key={`${day}_iner`}>
+                      {day !== OVER_DAY ? day : ""}
+                    </DaySt>
+                  );
+                })}
+              </RowDaysSt>
+            </WrapRowDaysSt>
+          );
+        })}
+      </WrapDaysContentSt>
+    </MonthSt>
   );
 };
 

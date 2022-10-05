@@ -23,18 +23,26 @@ export const handler: Handler = async (event, context) => {
       body: JSON.stringify({ error: " NOT allowed" }),
     };
   }
-
-  const {
-    eventType,
-    eventData: { _id, title, user, start, end },
-    //@ts-ignore
-  } = JSON.parse(event.body);
+  //@ts-ignore
+  const bodyRequesData = JSON.parse(event.body);
 
   try {
     const connectDB = await connect();
     const EventCalendar = connectDB.model("EventCalendar", eventCalendarSchema);
-    switch (eventType) {
+    switch (bodyRequesData?.eventType) {
+      case "GET_EVENTS":
+        const allEvents = await EventCalendar.find();
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            allEvents,
+            message: `SUCCESS`,
+          }),
+        };
       case "ADD_EVENT":
+        const {
+          eventData: { _id, title, user, start, end },
+        } = bodyRequesData;
         const newEvent = new EventCalendar({
           title,
           user,
@@ -45,6 +53,7 @@ export const handler: Handler = async (event, context) => {
         return SUCCESS;
       case "UPDATE_EVENT":
         // const all;
+
         await EventCalendar.findByIdAndUpdate(_id, {
           title,
           user,
