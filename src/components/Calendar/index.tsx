@@ -29,7 +29,7 @@ const Calendar = () => {
     async () => {
       const response = await axios.post(
         // TODO: replace online API
-        "http://localhost:8888/.netlify/functions/handle-events-calendar",
+        "/.netlify/functions/handle-events-calendar",
         JSON.stringify({
           eventType: "GET_EVENTS",
         })
