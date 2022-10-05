@@ -6,9 +6,18 @@ const Calendar = () => {
   const { isLoading, error, data } = useQuery(
     ["get-events-calendar"],
     async () => {
-      const response = await axios.get(
+      const response = await axios.post(
         // TODO: replace online API
-        "http://localhost:8888/.netlify/functions/get-events-calendar"
+        "http://localhost:8888/.netlify/functions/handle-events-calendar",
+        JSON.stringify({
+          eventType: "ADD_EVENT",
+          eventData: {
+            user: "Cool Guys",
+            title: "first Call",
+            start: "10",
+            end: "12",
+          },
+        })
       );
       return { data: response.data };
     }
