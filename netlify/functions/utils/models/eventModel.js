@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 const eventCalendarSchema = new Schema({
   user: String,
   title: String,
-  start: String,
-  end: String,
+  time: String,
+  date: String,
 });
 
 module.exports = { eventCalendarSchema };

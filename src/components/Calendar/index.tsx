@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
@@ -9,12 +10,15 @@ import {
   getDaysArrayOfMonth,
   totalDaysOfMonth,
 } from "libs/utils-dates";
+import { useAppDispatch } from "stores/hooks";
 
 import { DayHeaderSt, MonthSt, WrapDaysHeaderSt } from "./calendar.styles";
+import { getAllEvent } from "stores/event.reducer";
 
 const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
 const Calendar = () => {
+  const dispatch = useAppDispatch();
   const { isLoading, error, data } = useQuery(
     ["get-events-calendar"],
     async () => {
@@ -25,9 +29,14 @@ const Calendar = () => {
           eventType: "GET_EVENTS",
         })
       );
+
+      dispatch(getAllEvent(response?.data?.allEvents));
       return { data: response.data };
     }
   );
+
+  // useEffect(() => {
+  // }, [data, dispatch]);
   // Mock current Month
 
   return (

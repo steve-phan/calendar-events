@@ -41,24 +41,26 @@ export const handler: Handler = async (event, context) => {
         };
       case "ADD_EVENT":
         const {
-          eventData: { _id, title, user, start, end },
+          eventData: { title, user, time, date },
         } = bodyRequesData;
         const newEvent = new EventCalendar({
           title,
           user,
-          start,
-          end,
+          time,
+          date,
         });
         await newEvent.save();
         return SUCCESS;
       case "UPDATE_EVENT":
         // const all;
-
+        const {
+          eventData: { _id },
+        } = bodyRequesData;
         await EventCalendar.findByIdAndUpdate(_id, {
           title,
           user,
-          start,
-          end,
+          time,
+          date,
         });
         return SUCCESS;
       case "DELETE_EVENT":

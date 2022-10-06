@@ -9,6 +9,7 @@ import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
 
+import axios from "axios";
 import { getSelectedDay } from "libs/utils-dates";
 
 import { SelectTimeSt } from "./addeventform.styles";
@@ -48,7 +49,7 @@ const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
     (prop: TAddEventProps) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setEventState({ ...eventState, [prop]: event.target.value });
     };
-  const handleSaveEvent = () => {
+  const handleSaveEvent = async () => {
     openModal(false);
     const { title, user, time } = eventState;
     if (!!title && !!user && !!time) {
@@ -58,6 +59,19 @@ const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
           user,
           time,
           date: getSelectedDay(day, "MM-DD-YYYY"),
+        })
+      );
+      await axios.post(
+        // TODO: replace online API
+        "/.netlify/functions/handle-events-calendar",
+        JSON.stringify({
+          eventType: "ADD_EVENT",
+          eventData: {
+            title,
+            user,
+            time,
+            date: getSelectedDay(day, "MM-DD-YYYY"),
+          },
         })
       );
     }
