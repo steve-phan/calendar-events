@@ -47,7 +47,7 @@ export const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
 
   const handleChange =
     (prop: TAddEventProps) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (prop === "title" && event.target.value.length >= 80) {
+      if (event.target.value.length > 30) {
         return;
       }
       setEventState({ ...eventState, [prop]: event.target.value });

@@ -83,9 +83,8 @@ export const Month = ({ daysArr }: { daysArr: number[] }) => {
                 );
 
                 return (
-                  <WrapDaySt>
+                  <WrapDaySt key={`${day}_inner_${index}`}>
                     <DaySt
-                      key={`${day}_inner`}
                       onClick={(e) => {
                         setSelectedDay(day);
                         //@ts-ignore
@@ -96,9 +95,25 @@ export const Month = ({ daysArr }: { daysArr: number[] }) => {
                     </DaySt>
                     {exitsEvents.length > 0 && (
                       <WrapDayEvents>
-                        {exitsEvents.map((event) => {
-                          return <EventItem {...event} openModal={setOpen} />;
-                        })}
+                        {exitsEvents
+                          .sort((a, b) => {
+                            const first = Number(
+                              a.time.replace("-", ":").split(":")[0]
+                            );
+                            const last = Number(
+                              b.time.replace("-", ":").split(":")[2]
+                            );
+                            return first - last;
+                          })
+                          .map((event) => {
+                            return (
+                              <EventItem
+                                {...event}
+                                openModal={setOpen}
+                                key={event._id}
+                              />
+                            );
+                          })}
                       </WrapDayEvents>
                     )}
                   </WrapDaySt>
