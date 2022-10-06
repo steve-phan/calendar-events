@@ -1,27 +1,18 @@
 import axios from "axios";
-import React from "react";
 import { useQuery } from "react-query";
-import _lodash from "lodash";
 
 import { daysOfTheWeek } from "libs/utils-types";
+import Day from "components/Days";
 
 import {
-  MonthSt,
-  WrapDaysHeaderSt,
-  DayHeaderSt,
-  WrapDaysContentSt,
-  WrapRowDaysSt,
-  RowDaysSt,
-  DaySt,
-} from "./calendar.styles";
-import {
-  OVER_DAY,
+  firstDayOfMonth,
   getDaysArrayOfMonth,
   totalDaysOfMonth,
-  firstDayOfWeek,
-  firstDayOfMonth,
-  first,
-} from "./calendar.utils";
+} from "libs/utils-dates";
+
+import { DayHeaderSt, MonthSt, WrapDaysHeaderSt } from "./calendar.styles";
+
+const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
 const Calendar = () => {
   const { isLoading, error, data } = useQuery(
@@ -37,9 +28,7 @@ const Calendar = () => {
       return { data: response.data };
     }
   );
-  console.log({ data });
   // Mock current Month
-  const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
   return (
     <MonthSt>
@@ -48,23 +37,7 @@ const Calendar = () => {
           <DayHeaderSt key={pos}>{dayOfTheWeek}</DayHeaderSt>
         ))}
       </WrapDaysHeaderSt>
-      <WrapDaysContentSt>
-        {_lodash.chunk(daysArr, 7).map((week, weekIndex) => {
-          return (
-            <WrapRowDaysSt key={`${weekIndex}_outer`}>
-              <RowDaysSt>
-                {week.map((day, index) => {
-                  return (
-                    <DaySt key={`${day}_iner`}>
-                      {day !== OVER_DAY ? day : ""}
-                    </DaySt>
-                  );
-                })}
-              </RowDaysSt>
-            </WrapRowDaysSt>
-          );
-        })}
-      </WrapDaysContentSt>
+      <Day daysArr={daysArr} />
     </MonthSt>
   );
 };

@@ -30,3 +30,15 @@ export const getDaysArrayOfMonth = (
         : index - firstDayOfMonth + 1
     );
 };
+
+/**
+ * Get SelectedDay to show UI
+ * @param day
+ * @returns
+ */
+export const getSelectedDay = (day: number) => {
+  const _year = dayjs().year();
+  const _month = dayjs().month() + 1;
+  const selectedDay = `${_year}-${_month}-${day}`;
+  return dayjs(selectedDay).format("dddd, DD MMMM");
+};
