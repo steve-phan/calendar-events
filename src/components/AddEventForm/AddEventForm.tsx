@@ -8,13 +8,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
+import axios from "axios";
 
-import * as axios from "axios";
 import { getSelectedDay } from "libs/utils-dates";
-
-import { SelectTimeSt } from "./addeventform.styles";
 import { useAppDispatch } from "stores/hooks";
 import { addEvent } from "stores/event.reducer";
+
+import { SelectTimeSt } from "./addeventform.styles";
 
 const mockTime = [
   "10:30-11:00",
@@ -41,12 +41,15 @@ interface IAddEeventFormProps {
   openModal: (open: boolean) => void;
 }
 
-const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
+export const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
   const [eventState, setEventState] = useState(defaultFromState);
   const dispatch = useAppDispatch();
 
   const handleChange =
     (prop: TAddEventProps) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (prop === "title" && event.target.value.length >= 80) {
+        return;
+      }
       setEventState({ ...eventState, [prop]: event.target.value });
     };
   const handleSaveEvent = async () => {
@@ -61,7 +64,7 @@ const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
           date: getSelectedDay(day, "MM-DD-YYYY"),
         })
       );
-      await axios.post(
+      const { data } = await axios.post(
         // TODO: replace online API
         "/.netlify/functions/handle-events-calendar",
         JSON.stringify({
@@ -83,7 +86,7 @@ const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
           fullWidth
           name="title"
           id="standard-basic"
-          label="Add title and time"
+          label="Add title"
           variant="standard"
           onChange={handleChange("title")}
         />
@@ -136,5 +139,3 @@ const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
     </Card>
   );
 };
-
-export default AddEventForm;

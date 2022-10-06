@@ -3,7 +3,7 @@ import React from "react";
 import { IEvent, viewEvent } from "stores/event.reducer";
 import { useAppDispatch } from "stores/hooks";
 
-import { WrapEventItemSt } from "./days.styles";
+import { WrapEventItemSt } from "./month.styles";
 
 interface IEventItemProps extends IEvent {
   openModal: (open: boolean) => void;

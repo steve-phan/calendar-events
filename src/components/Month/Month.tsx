@@ -4,9 +4,11 @@ import Popper, { PopperPlacementType } from "@mui/material/Popper";
 import _lodash from "lodash";
 import React, { useState } from "react";
 
-import AddEventForm from "components/AddEventForm";
+import { AddEventForm } from "components/AddEventForm/AddEventForm";
 import { getSelectedDay, OVER_DAY } from "libs/utils-dates";
 import { useAppDispatch, useAppSelector } from "stores/hooks";
+import { ViewEventForm } from "components/ViewEventForm/ViewEventForm";
+import { closeViewEvent } from "stores/event.reducer";
 
 import {
   DayModalSt,
@@ -16,12 +18,10 @@ import {
   WrapDaysContentSt,
   WrapDaySt,
   WrapRowDaysSt,
-} from "./days.styles";
+} from "./month.styles";
 import EventItem from "./EventItem";
-import ViewEventForm from "components/ViewEventForm";
-import { closeViewEvent } from "stores/event.reducer";
 
-const Day = ({ daysArr }: { daysArr: number[] }) => {
+export const Month = ({ daysArr }: { daysArr: number[] }) => {
   const events = useAppSelector((state) => state.events);
   const dispatch = useAppDispatch();
 
@@ -31,7 +31,6 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
   );
   const [open, setOpen] = React.useState(false);
   const [placement, setPlacement] = React.useState<PopperPlacementType>();
-  console.log({ events });
   const handleClick =
     (newPlacement: PopperPlacementType) =>
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,11 +52,7 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
               {events.openViewEvent ? (
-                <ViewEventForm
-                  day={selectedDay}
-                  openModal={setOpen}
-                  {...events.viewEvent}
-                />
+                <ViewEventForm openModal={setOpen} {...events.viewEvent} />
               ) : (
                 <AddEventForm day={selectedDay} openModal={setOpen} />
               )}
@@ -90,7 +85,7 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
                 return (
                   <WrapDaySt>
                     <DaySt
-                      key={`${day}_iner`}
+                      key={`${day}_inner`}
                       onClick={(e) => {
                         setSelectedDay(day);
                         //@ts-ignore
@@ -116,5 +111,3 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
     </WrapDaysContentSt>
   );
 };
-
-export default Day;

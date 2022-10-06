@@ -63,4 +63,9 @@ export const WrapEventItemSt = styled.div`
   font-size: 12px;
   border: 1px solid pink;
   z-index: 5;
+  white-space: nowrap;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;

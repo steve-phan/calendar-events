@@ -1,10 +1,8 @@
-import { useEffect } from "react";
-import axios from "axios";
 import { useQuery } from "react-query";
+import axios from "axios";
 
 import { daysOfTheWeek } from "libs/utils-types";
-import Day from "components/Days";
-
+import { Month } from "components/Month/Month";
 import {
   firstDayOfMonth,
   getDaysArrayOfMonth,
@@ -13,11 +11,11 @@ import {
 import { useAppDispatch } from "stores/hooks";
 
 import { DayHeaderSt, MonthSt, WrapDaysHeaderSt } from "./calendar.styles";
-import { getAllEvent } from "stores/event.reducer";
+import { updateAllEvent } from "stores/event.reducer";
 
 const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
-const Calendar = () => {
+export const Calendar = () => {
   const dispatch = useAppDispatch();
   const { isLoading, error, data } = useQuery(
     ["get-events-calendar"],
@@ -30,14 +28,10 @@ const Calendar = () => {
         })
       );
 
-      dispatch(getAllEvent(response?.data?.allEvents));
+      dispatch(updateAllEvent(response?.data?.allEvents));
       return { data: response.data };
     }
   );
-
-  // useEffect(() => {
-  // }, [data, dispatch]);
-  // Mock current Month
 
   return (
     <MonthSt>
@@ -46,9 +40,7 @@ const Calendar = () => {
           <DayHeaderSt key={pos}>{dayOfTheWeek}</DayHeaderSt>
         ))}
       </WrapDaysHeaderSt>
-      <Day daysArr={daysArr} />
+      <Month daysArr={daysArr} />
     </MonthSt>
   );
 };
-
-export default Calendar;

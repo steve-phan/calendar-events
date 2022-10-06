@@ -30,7 +30,7 @@ const eventSlice = createSlice({
   name: "event",
   initialState: eventInitialState,
   reducers: {
-    getAllEvent: (state, { payload }) => {
+    updateAllEvent: (state, { payload }) => {
       state.events = payload;
     },
     addEvent: (state, { payload }) => {
@@ -45,6 +45,7 @@ const eventSlice = createSlice({
       state.openViewEvent = false;
     },
     updateEvent: (state, { payload }) => {
+      console.log({ payload });
       state.events = state.events.map((event) => {
         if (event._id === payload._id) {
           return payload;
@@ -56,5 +57,10 @@ const eventSlice = createSlice({
 });
 
 export default eventSlice.reducer;
-export const { getAllEvent, addEvent, viewEvent, closeViewEvent, updateEvent } =
-  eventSlice.actions;
+export const {
+  updateAllEvent,
+  addEvent,
+  viewEvent,
+  closeViewEvent,
+  updateEvent,
+} = eventSlice.actions;

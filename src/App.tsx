@@ -2,7 +2,7 @@ import React from "react";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import Calendar from "components/Calendar";
+import { Calendar } from "./components/Calendar";
 
 import store from "./stores/index";
 import "./App.css";

@@ -1,4 +1,4 @@
-import { getSelectedDay } from "./";
+import { getSelectedDay } from ".";
 
 describe("getSelectedDay", () => {
   it("when the format is not provided", () => {

@@ -36,13 +36,16 @@ export const handler: Handler = async (event, context) => {
       time: "",
       date: "",
     };
+    const getNewEvents = async () => await EventCalendar.find();
+    let newEvents;
     switch (bodyRequesData?.eventType) {
       case "GET_EVENTS":
-        const allEvents = await EventCalendar.find();
+        newEvents = await EventCalendar.find();
+
         return {
           statusCode: 200,
           body: JSON.stringify({
-            allEvents,
+            allEvents: newEvents,
             message: `SUCCESS`,
           }),
         };
@@ -54,20 +57,42 @@ export const handler: Handler = async (event, context) => {
           date,
         });
         await newEvent.save();
-        return SUCCESS;
+
+        newEvents = await EventCalendar.find();
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            allEvents: newEvents,
+            message: `SUCCESS`,
+          }),
+        };
       case "UPDATE_EVENT":
-        console.log({ _id });
         await EventCalendar.findByIdAndUpdate(_id, {
           title,
           user,
           time,
           date,
         });
-        return SUCCESS;
+        newEvents = await EventCalendar.find();
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            allEvents: newEvents,
+            message: `SUCCESS`,
+          }),
+        };
       case "DELETE_EVENT":
         //Maybe replace by status or over ...
         await EventCalendar.findByIdAndDelete(_id);
-        return SUCCESS;
+        newEvents = await EventCalendar.find();
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            allEvents: newEvents,
+            message: `SUCCESS`,
+          }),
+        };
       default:
         return FAILURE;
     }
