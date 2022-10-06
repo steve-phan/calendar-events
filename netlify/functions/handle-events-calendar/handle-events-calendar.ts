@@ -24,11 +24,18 @@ export const handler: Handler = async (event, context) => {
     };
   }
   //@ts-ignore
-  const bodyRequesData = JSON.parse(event.body);
+  const bodyRequesData = await JSON.parse(event.body);
 
   try {
     const connectDB = await connect();
     const EventCalendar = connectDB.model("EventCalendar", eventCalendarSchema);
+    const { _id, title, user, time, date } = bodyRequesData?.eventData || {
+      _id: "",
+      title: "",
+      user: "",
+      time: "",
+      date: "",
+    };
     switch (bodyRequesData?.eventType) {
       case "GET_EVENTS":
         const allEvents = await EventCalendar.find();
@@ -40,9 +47,6 @@ export const handler: Handler = async (event, context) => {
           }),
         };
       case "ADD_EVENT":
-        const {
-          eventData: { title, user, time, date },
-        } = bodyRequesData;
         const newEvent = new EventCalendar({
           title,
           user,
@@ -52,10 +56,7 @@ export const handler: Handler = async (event, context) => {
         await newEvent.save();
         return SUCCESS;
       case "UPDATE_EVENT":
-        // const all;
-        const {
-          eventData: { _id },
-        } = bodyRequesData;
+        console.log({ _id });
         await EventCalendar.findByIdAndUpdate(_id, {
           title,
           user,

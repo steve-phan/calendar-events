@@ -8,12 +8,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
 import { getSelectedDay } from "libs/utils-dates";
 
 import { useAppDispatch } from "stores/hooks";
-import { addEvent, closeViewEvent } from "stores/event.reducer";
+import { addEvent, closeViewEvent, updateEvent } from "stores/event.reducer";
 import { UpdateEvent } from "./vieweventform.styles";
 
 const mockTime = [
@@ -42,6 +43,7 @@ interface IViewEeventFormProps {
   user: string;
   time: string;
   date: string;
+  _id: string;
 }
 
 const ViewEventForm = ({
@@ -51,28 +53,46 @@ const ViewEventForm = ({
   user,
   time,
   date,
+  _id,
 }: IViewEeventFormProps) => {
   const [eventState, setEventState] = useState({ title, user, time });
   const dispatch = useAppDispatch();
+
   const [edit, setEdit] = useState(true);
 
   const handleChange =
     (prop: TAddEventProps) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setEventState({ ...eventState, [prop]: event.target.value });
     };
-  const handleUpdateEvent = () => {
+  const handleUpdateEvent = async () => {
     openModal(false);
     const { title, user, time } = eventState;
+    console.log({ eventState });
     if (!!title && !!user && !!time) {
       dispatch(
-        addEvent({
+        updateEvent({
+          _id,
           title,
           user,
           time,
-          day: getSelectedDay(day, "MM-DD-YYYY"),
+          date: getSelectedDay(day, "MM-DD-YYYY"),
         })
       );
     }
+    await axios.post(
+      // TODO: replace online API
+      "/.netlify/functions/handle-events-calendar",
+      JSON.stringify({
+        eventType: "UPDATE_EVENT",
+        eventData: {
+          _id,
+          title,
+          user,
+          time,
+          date: getSelectedDay(day, "MM-DD-YYYY"),
+        },
+      })
+    );
   };
 
   // useEffect(() => {

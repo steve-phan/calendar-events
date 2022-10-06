@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IEvent {
-  _id: number;
+  _id: string;
   title: string;
   user: string;
   time: string;
@@ -14,7 +14,7 @@ interface IStoreState {
   openViewEvent: boolean;
 }
 const eventInit = {
-  _id: 0,
+  _id: "",
   title: "",
   user: "",
   time: "",
@@ -45,7 +45,12 @@ const eventSlice = createSlice({
       state.openViewEvent = false;
     },
     updateEvent: (state, { payload }) => {
-      state.events.push(payload);
+      state.events = state.events.map((event) => {
+        if (event._id === payload._id) {
+          return payload;
+        }
+        return event;
+      });
     },
   },
 });

@@ -9,7 +9,7 @@ import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
 
-import axios from "axios";
+import * as axios from "axios";
 import { getSelectedDay } from "libs/utils-dates";
 
 import { SelectTimeSt } from "./addeventform.styles";
