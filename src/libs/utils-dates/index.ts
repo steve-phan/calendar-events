@@ -36,9 +36,12 @@ export const getDaysArrayOfMonth = (
  * @param day
  * @returns
  */
-export const getSelectedDay = (day: number) => {
+export const getSelectedDay = (
+  day: number,
+  formatType: string = "dddd, DD MMMM"
+) => {
   const _year = dayjs().year();
   const _month = dayjs().month() + 1;
   const selectedDay = `${_year}-${_month}-${day}`;
-  return dayjs(selectedDay).format("dddd, DD MMMM");
+  return dayjs(selectedDay).format(formatType);
 };

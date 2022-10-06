@@ -12,6 +12,8 @@ import React, { useState } from "react";
 import { getSelectedDay } from "libs/utils-dates";
 
 import { SelectTimeSt } from "./addeventform.styles";
+import { useAppDispatch } from "stores/hooks";
+import { addEvent } from "stores/event.reducer";
 
 const mockTime = [
   "10:30-11:00",
@@ -32,14 +34,33 @@ const defaultFromState = {
 
 type TAddEventProps = keyof typeof defaultFromState;
 
-const AddEventForm = ({ day }: { day: number }) => {
+interface IAddEeventFormProps {
+  day: number;
+  closeForm: (open: boolean) => void;
+}
+
+const AddEventForm = ({ day, closeForm }: IAddEeventFormProps) => {
   const [eventState, setEventState] = useState(defaultFromState);
+  const dispatch = useAppDispatch();
 
   const handleChange =
     (prop: TAddEventProps) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setEventState({ ...eventState, [prop]: event.target.value });
     };
-
+  const handleSaveEvent = () => {
+    closeForm(false);
+    const { title, user, time } = eventState;
+    if (!!title && !!user && !!time) {
+      dispatch(
+        addEvent({
+          title,
+          user,
+          time,
+          day: getSelectedDay(day, "MM-DD-YYYY"),
+        })
+      );
+    }
+  };
   return (
     <Card sx={{ minWidth: 300, maxWidth: 400 }}>
       <CardContent>
@@ -93,7 +114,7 @@ const AddEventForm = ({ day }: { day: number }) => {
           justifyContent: "end",
         }}
       >
-        <Button size="small" variant="contained">
+        <Button size="small" variant="contained" onClick={handleSaveEvent}>
           Save
         </Button>
       </CardActions>

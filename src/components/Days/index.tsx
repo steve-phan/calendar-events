@@ -43,7 +43,7 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
-              <AddEventForm day={selectedDay} />
+              <AddEventForm day={selectedDay} closeForm={setOpen} />
             </Paper>
           </Fade>
         )}
