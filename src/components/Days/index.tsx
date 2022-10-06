@@ -5,24 +5,33 @@ import _lodash from "lodash";
 import React, { useState } from "react";
 
 import AddEventForm from "components/AddEventForm";
-import { OVER_DAY } from "libs/utils-dates";
+import { getSelectedDay, OVER_DAY } from "libs/utils-dates";
+import { useAppDispatch, useAppSelector } from "stores/hooks";
 
 import {
   DayModalSt,
   DaySt,
   RowDaysSt,
+  WrapDayEvents,
   WrapDaysContentSt,
+  WrapDaySt,
   WrapRowDaysSt,
 } from "./days.styles";
+import EventItem from "./EventItem";
+import ViewEventForm from "components/ViewEventForm";
+import { closeViewEvent } from "stores/event.reducer";
 
 const Day = ({ daysArr }: { daysArr: number[] }) => {
+  const events = useAppSelector((state) => state.events);
+  const dispatch = useAppDispatch();
+
   const [selectedDay, setSelectedDay] = useState(0);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const [open, setOpen] = React.useState(false);
   const [placement, setPlacement] = React.useState<PopperPlacementType>();
-  console.log({ open });
+  console.log({ events });
   const handleClick =
     (newPlacement: PopperPlacementType) =>
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -43,7 +52,15 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
-              <AddEventForm day={selectedDay} closeForm={setOpen} />
+              {events.openViewEvent ? (
+                <ViewEventForm
+                  day={selectedDay}
+                  openModal={setOpen}
+                  {...events.viewEvent}
+                />
+              ) : (
+                <AddEventForm day={selectedDay} openModal={setOpen} />
+              )}
             </Paper>
           </Fade>
         )}
@@ -51,8 +68,13 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
       {open && (
         <DayModalSt
           onClick={() => {
-            console.log("click on on Modal");
             setOpen(false);
+            /** The reason for closing ViewEvent here because
+             *  React.18 call   useEffect twice.
+             *  Normaly we should call it when ViewEventForm component unmount
+             *
+             */
+            dispatch(closeViewEvent());
           }}
         />
       )}
@@ -61,24 +83,36 @@ const Day = ({ daysArr }: { daysArr: number[] }) => {
           <WrapRowDaysSt key={`${weekIndex}_outer`}>
             <RowDaysSt>
               {week.map((day, index) => {
+                const exitsEvents = events.events.filter(
+                  (event) => event.date === getSelectedDay(day, "MM-DD-YYYY")
+                );
+
                 return (
-                  <DaySt
-                    key={`${day}_iner`}
-                    onClick={(e) => {
-                      setSelectedDay(day);
-                      //@ts-ignore
-                      handleClick("top-start")(e);
-                    }}
-                  >
-                    {day !== OVER_DAY ? day : ""}
-                  </DaySt>
+                  <WrapDaySt>
+                    <DaySt
+                      key={`${day}_iner`}
+                      onClick={(e) => {
+                        setSelectedDay(day);
+                        //@ts-ignore
+                        handleClick("top-start")(e);
+                      }}
+                    >
+                      {day !== OVER_DAY ? day : ""}
+                    </DaySt>
+                    {exitsEvents.length > 0 && (
+                      <WrapDayEvents>
+                        {exitsEvents.map((event) => {
+                          return <EventItem {...event} openModal={setOpen} />;
+                        })}
+                      </WrapDayEvents>
+                    )}
+                  </WrapDaySt>
                 );
               })}
             </RowDaysSt>
           </WrapRowDaysSt>
         );
       })}
-      {/* <Button onClick={handleClick("top-start")}>Show</Button> */}
     </WrapDaysContentSt>
   );
 };

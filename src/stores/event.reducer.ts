@@ -1,20 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface IEvent {
+export interface IEvent {
   title: string;
   user: string;
   time: string;
   date: string;
 }
 
-const eventInitialState = {
-  data: [],
-  currentEvent: {
-    title: "",
-    user: "",
-    time: "",
-    date: "",
-  },
+interface IStoreState {
+  events: IEvent[];
+  viewEvent: IEvent;
+  openViewEvent: boolean;
+}
+const eventInit = {
+  title: "",
+  user: "",
+  time: "",
+  date: "",
+};
+const eventInitialState: IStoreState = {
+  events: [],
+  viewEvent: eventInit,
+  openViewEvent: false,
 };
 
 const eventSlice = createSlice({
@@ -22,11 +29,21 @@ const eventSlice = createSlice({
   initialState: eventInitialState,
   reducers: {
     addEvent: (state, { payload }) => {
-      console.log({ payload });
-      state.currentEvent = payload;
+      state.events.push(payload);
+    },
+    viewEvent: (state, { payload }) => {
+      state.viewEvent = payload;
+      state.openViewEvent = true;
+    },
+    closeViewEvent: (state) => {
+      state.viewEvent = eventInit;
+      state.openViewEvent = false;
+    },
+    updateEvent: (state, { payload }) => {
+      state.events.push(payload);
     },
   },
 });
 
 export default eventSlice.reducer;
-export const { addEvent } = eventSlice.actions;
+export const { addEvent, viewEvent, closeViewEvent } = eventSlice.actions;

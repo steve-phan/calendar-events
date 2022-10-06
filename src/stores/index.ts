@@ -4,7 +4,7 @@ import eventReducer from "./event.reducer";
 
 const store = configureStore({
   reducer: {
-    users: eventReducer,
+    events: eventReducer,
   },
 });
 

@@ -32,14 +32,15 @@ const defaultFromState = {
   time: "",
 };
 
+export type TEventFromState = typeof defaultFromState;
 type TAddEventProps = keyof typeof defaultFromState;
 
 interface IAddEeventFormProps {
   day: number;
-  closeForm: (open: boolean) => void;
+  openModal: (open: boolean) => void;
 }
 
-const AddEventForm = ({ day, closeForm }: IAddEeventFormProps) => {
+const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
   const [eventState, setEventState] = useState(defaultFromState);
   const dispatch = useAppDispatch();
 
@@ -48,7 +49,7 @@ const AddEventForm = ({ day, closeForm }: IAddEeventFormProps) => {
       setEventState({ ...eventState, [prop]: event.target.value });
     };
   const handleSaveEvent = () => {
-    closeForm(false);
+    openModal(false);
     const { title, user, time } = eventState;
     if (!!title && !!user && !!time) {
       dispatch(
@@ -56,7 +57,7 @@ const AddEventForm = ({ day, closeForm }: IAddEeventFormProps) => {
           title,
           user,
           time,
-          day: getSelectedDay(day, "MM-DD-YYYY"),
+          date: getSelectedDay(day, "MM-DD-YYYY"),
         })
       );
     }
