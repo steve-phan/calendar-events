@@ -105,12 +105,12 @@ export const Month = ({ daysArr }: { daysArr: number[] }) => {
                             );
                             return first - last;
                           })
-                          .map((event) => {
+                          .map((event, index) => {
                             return (
                               <EventItem
                                 {...event}
                                 openModal={setOpen}
-                                key={event._id}
+                                key={`${event._id}_${index}`}
                               />
                             );
                           })}

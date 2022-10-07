@@ -12,6 +12,7 @@ import { useAppDispatch } from "stores/hooks";
 
 import { DayHeaderSt, MonthSt, WrapDaysHeaderSt } from "./calendar.styles";
 import { updateAllEvent } from "stores/event.reducer";
+import { useEffect } from "react";
 
 const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
@@ -28,11 +29,22 @@ export const Calendar = () => {
         })
       );
 
-      dispatch(updateAllEvent(response?.data?.allEvents));
-      return { data: response.data };
+      return response.data.allEvents;
     }
   );
+  useEffect(() => {
+    if (data) dispatch(updateAllEvent(data));
+  }, [data, dispatch]);
 
+  if (isLoading) {
+    return <h1>App is loading ...</h1>;
+  }
+
+  if (error) {
+    return <h1>Something wrong, try again please ...</h1>;
+  }
+
+  console.log({ data, isLoading });
   return (
     <MonthSt>
       <WrapDaysHeaderSt>
