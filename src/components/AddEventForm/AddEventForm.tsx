@@ -8,11 +8,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
-import axios from "axios";
 
 import { getSelectedDay } from "libs/utils-dates";
 import { useAppDispatch } from "stores/hooks";
 import { addEvent } from "stores/event.reducer";
+import { CarlendarAPI } from "api";
 
 import { SelectTimeSt } from "./addeventform.styles";
 
@@ -56,27 +56,15 @@ export const AddEventForm = ({ day, openModal }: IAddEeventFormProps) => {
     openModal(false);
     const { title, user, time } = eventState;
     if (!!title && !!user && !!time) {
-      dispatch(
-        addEvent({
-          title,
-          user,
-          time,
-          date: getSelectedDay(day, "MM-DD-YYYY"),
-        })
-      );
-      const { data } = await axios.post(
-        // TODO: replace online API
-        "/.netlify/functions/handle-events-calendar",
-        JSON.stringify({
-          eventType: "ADD_EVENT",
-          eventData: {
-            title,
-            user,
-            time,
-            date: getSelectedDay(day, "MM-DD-YYYY"),
-          },
-        })
-      );
+      const eventData = {
+        title,
+        user,
+        time,
+        date: getSelectedDay(day, "MM-DD-YYYY"),
+      };
+      dispatch(addEvent(eventData));
+      // TODO: Should handle error here
+      await CarlendarAPI.ADD_EVENT(eventData);
     }
   };
   return (

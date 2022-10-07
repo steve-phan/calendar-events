@@ -9,12 +9,12 @@ import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import React, { useState } from "react";
-import axios from "axios";
 
 import { useAppDispatch } from "stores/hooks";
 import { updateAllEvent, updateEvent } from "stores/event.reducer";
 
 import { EventTimeSt, UpdateEvent } from "./vieweventform.styles";
+import { CarlendarAPI } from "api";
 
 const mockTime = [
   "10:30-11:00",
@@ -71,30 +71,18 @@ export const ViewEventForm = ({
   const handleUpdateEvent = async () => {
     openModal(false);
     const { title, user, time } = eventState;
+    const eventData = {
+      _id,
+      title,
+      user,
+      time,
+      date,
+    };
     if (!!title && !!user && !!time) {
-      dispatch(
-        updateEvent({
-          _id,
-          title,
-          user,
-          time,
-          date,
-        })
-      );
+      dispatch(updateEvent(eventData));
     }
-    const response = await axios.post(
-      "/.netlify/functions/handle-events-calendar",
-      JSON.stringify({
-        eventType: "UPDATE_EVENT",
-        eventData: {
-          _id,
-          title,
-          user,
-          time,
-          date,
-        },
-      })
-    );
+    // TODO: Should handle error here
+    const response = await CarlendarAPI.UPDATE_EVENT(eventData);
 
     dispatch(updateAllEvent(response?.data?.allEvents));
   };
@@ -105,20 +93,14 @@ export const ViewEventForm = ({
   const handleDeleteEvent = async () => {
     openModal(false);
     const { title, user, time } = eventState;
-
-    const response = await axios.post(
-      "/.netlify/functions/handle-events-calendar",
-      JSON.stringify({
-        eventType: "DELETE_EVENT",
-        eventData: {
-          _id,
-          title,
-          user,
-          time,
-          date,
-        },
-      })
-    );
+    const eventData = {
+      _id,
+      title,
+      user,
+      time,
+      date,
+    };
+    const response = await CarlendarAPI.DELETE_EVENT(eventData);
 
     dispatch(updateAllEvent(response?.data?.allEvents));
   };

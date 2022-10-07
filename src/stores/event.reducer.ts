@@ -45,7 +45,6 @@ const eventSlice = createSlice({
       state.openViewEvent = false;
     },
     updateEvent: (state, { payload }) => {
-      console.log({ payload });
       state.events = state.events.map((event) => {
         if (event._id === payload._id) {
           return payload;

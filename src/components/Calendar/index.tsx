@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import axios from "axios";
+import { useEffect } from "react";
 
 import { daysOfTheWeek } from "libs/utils-types";
 import { Month } from "components/Month/Month";
@@ -12,7 +12,7 @@ import { useAppDispatch } from "stores/hooks";
 
 import { DayHeaderSt, MonthSt, WrapDaysHeaderSt } from "./calendar.styles";
 import { updateAllEvent } from "stores/event.reducer";
-import { useEffect } from "react";
+import { CarlendarAPI } from "api";
 
 const daysArr = getDaysArrayOfMonth(firstDayOfMonth, totalDaysOfMonth);
 
@@ -21,14 +21,7 @@ export const Calendar = () => {
   const { isLoading, error, data } = useQuery(
     ["get-events-calendar"],
     async () => {
-      const response = await axios.post(
-        // TODO: replace online API
-        "/.netlify/functions/handle-events-calendar",
-        JSON.stringify({
-          eventType: "GET_EVENTS",
-        })
-      );
-
+      const response = await CarlendarAPI.GET_EVENTS();
       return response.data.allEvents;
     }
   );
@@ -44,7 +37,6 @@ export const Calendar = () => {
     return <h1>Something wrong, try again please ...</h1>;
   }
 
-  console.log({ data, isLoading });
   return (
     <MonthSt>
       <WrapDaysHeaderSt>
